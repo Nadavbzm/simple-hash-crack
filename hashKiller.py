@@ -3,6 +3,8 @@ import os
 import sys
 #from past.builtins import xrange
 
+complete_list = []
+
 def print_help():
     print("""\n\n
     --------------------------HashKiller By Nadav Ben Tzur--------------------------
@@ -25,7 +27,7 @@ def print_help():
     exit(1)
 
 
-def getargs():
+"""def getargs():
     global your_list
     your_list = ""
     global hash_type
@@ -100,68 +102,99 @@ def getargs():
         for y in xrange(current):
             a = [x+i for i in your_list for x in a]
         complete_list = complete_list + a
-
+"""
 def md4(strings, max_len):
-    for count in range(len(strings)-1):
-        input("list complete. press enter to continue (" + str(len(complete_list))+" passwords to try)...")
+    global complete_list
+    flag = 0
+    for count in range(len(strings)):
         for i in complete_list:
             sys.stdout.write("[+]Trying: " + i +"\t")
             print(str(hashlib.new('md4', i.encode('utf-8')).hexdigest()))
             if str(hashlib.new('md4', i.encode('utf-8')).hexdigest()) == strings[count]:
-                print("PASSWORD FOUND: " + i)
+                print("PASSWORD FOUND(MD4): " + i + "Number of tries: " + count)
                 command = "echo FOUND--------------------------------"
                 os.system("echo PASSWORD FOUND : " + i + ">> tries.txt")
-                input("-------------------------------")
-                return
+                input("-------------------------------\n\n\n\n\n\n\n\n\n\n\n\n")
+                flag += 1
+    return flag
 
 
 def md5(strings, max_len):
-    for count in range(len(strings)-1):
-        input("list complete. press enter to continue (" + str(len(complete_list))+" passwords to try)...")
+    global complete_list
+    flag = 0
+    for count in range(len(strings)):
         for i in complete_list:
             sys.stdout.write("[+]Trying: " + i +"\t")
             print(str(hashlib.new('md5', i.encode('utf-8')).hexdigest()))
             if str(hashlib.new('md5', i.encode('utf-8')).hexdigest()) == strings[count]:
-                print("PASSWORD FOUND: " + i)
+                print("PASSWORD FOUND(MD5): " + i)
                 command = "echo FOUND--------------------------------"
                 os.system("echo PASSWORD FOUND : " + i + ">> tries.txt")
-                input("-------------------------------")
-                return
+                input("-------------------------------\n\n\n\n\n\n\n\n\n\n\n\n")
+                flag +=1
+    return flag
 
 
 
 def sha1(strings, max_len):
-    for count in range(len(strings)-1):
-        input("list complete. press enter to continue (" + str(len(complete_list))+" passwords to try)...")
+    global complete_list
+    flag = 0
+    for count in range(len(strings)):
         for i in complete_list:
             sys.stdout.write("[+]Trying: " + i +"\t")
             print(str(hashlib.new('sha1', i.encode('utf-8')).hexdigest()))
             if str(hashlib.new('sha1', i.encode('utf-8')).hexdigest()) == strings[count]:
-                print("PASSWORD FOUND: " + i)
+                print("PASSWORD FOUND(SHA1): " + i)
                 command = "echo FOUND--------------------------------"
                 os.system("echo PASSWORD FOUND : " + i + ">> tries.txt")
-                input("-------------------------------")
-                return
+                input("-------------------------------\n\n\n\n\n\n\n\n\n\n\n\n")
+                flag +=1
+    return flag
 
 
 def main():
+    global complete_list
+#getargs()
+    hash_type = "md5"
+    max_len = 5
+    your_list = "abcdefghijklmnopqrstuvwxyz1234567890"
+    print("[-]Opening file test.txt")
+    with open("test.txt", 'r') as f:
+        print("[-]Generating list")
+        strings = [i.replace("\n", "") for i in f.readlines()[:-1]]
+        for current in range(max_len):
+            a = [i for i in your_list]
+            for y in range(current):
+                a = [x + i for i in your_list for x in a]
+                print("[-]----")
+            complete_list = complete_list + a
+            print(f"[-]Iteration {current}")
+        print("[-]List Complete")
+        print(f"[-]Decrypting {strings} with {hash_type}")
+        if hash_type == "md5":
+            input("press enter to continue (" + str(len(complete_list)) + " passwords to try)...")
+            if not md5(strings, max_len)==len(strings):
+                y = input("unspecified or abscent hash type. try all options?(y/n)")
+                if (y == 'y' or y == 'Y'):
+                    md4(strings, max_len)
+                    sha1(strings, max_len)
+        elif hash_type == "md4":
+            input("press enter to continue (" + str(len(complete_list)) + " passwords to try)...")
+            if not md4(strings, max_len)==len(strings):
+                y = input("unspecified or abscent hash type. try all options?(y/n)")
+                if (y == 'y' or y == 'Y'):
+                    md5(strings, max_len)
+                    sha1(strings, max_len)
+        elif hash_type == "sha1":
+            input("press enter to continue (" + str(len(complete_list)) + " passwords to try)...")
+            if not sha1(strings, max_len)==len(strings):
+                y = input("unspecified or abscent hash type. try all options?(y/n)")
+                if (y == 'y' or y == 'Y'):
+                    md4(strings, max_len)
+                    md5(strings, max_len)
 
-    getargs()
-    print(hash_type)
-    if hash_type == "md5":
-        md5(strings, max_len)
 
-    if hash_type == "md4":
-        md4(strings, max_len)
 
-    if hash_type == "sha1":
-        sha1(strings, max_len)
-    else:
-        y = input("unspecified or abscent hash type. try all options?(y/n)")
-        if(y == 'y'):
-            md5(strings, max_len)
-            md4(strings, max_len)
-            sha1(strings, max_len)
 
 if __name__ == '__main__':
     main()
